@@ -1,73 +1,68 @@
-# React + TypeScript + Vite
+# BeanOnStacks NFT DApp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A premium, modern React application for minting limited-edition SIP-009 **BeanOnStacks** NFTs on the Stacks blockchain. Secured by Bitcoin's proof-of-work.
 
-Currently, two official plugins are available:
+![App Preview](./public/BeanOnStacks.jpeg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Decentralized Minting**: Directly interacts with the `bean-nft.clar` smart contract on the Stacks Testnet.
+- **Wallet Integration**: Native integration with `@stacks/connect` supporting Xverse, Leather, and other Stacks browser extensions.
+- **Dynamic Live Stats**: Fetches the total minted supply directly from the blockchain on load.
+- **Mint Limits Enforcement**: Reads the connected wallet's principal ID to display personal mint counts and permanently lock the minting button at the 10 NFT maximum limit.
+- **Live Transaction Tracking**: Seamlessly generates and links users directly to the Hiro Explorer transaction hash upon initiating a mint.
+- **Mobile Responsive & Premium UI**: A highly polished, dynamic gradient dark-theme interface built with vanilla CSS.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend Framework**: [React 18](https://react.dev/) + [Vite](https://vitejs.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- **Blockchain Network**: [Stacks Testnet](https://www.stacks.co/)
+- **Web3 Integration**: 
+  - `@stacks/connect` & `@stacks/connect-react` for wallet authentication
+  - `@stacks/transactions` for serialization, Principal CV typing, and RPC API calls
+- **Styling**: Vanilla CSS with modern `@media` responsive queries
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Prerequisites
+- Node.js (v18 or higher)
+- A Stacks Wallet Browser Extension (e.g., [Xverse](https://www.xverse.app/) or [Leather](https://leather.io/)) fully configured on the Stacks Testnet.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Wizbisy/bean-on-stacks.git
+   cd bean-on-stacks
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open your browser and navigate to `http://localhost:5173`.
+
+## Build for Production
+
+To generate an optimized bundle for deployment (Vercel, Netlify, GitHub Pages, etc.), run:
+```bash
+npm run build
 ```
+This outputs all static files securely translated alongside CSS into the `dist/` directory.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Smart Contract
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The core application interacts with a **SIP-009 Non-Fungible Token Standard** contract.
+- **Contract Name**: `bean-nft`
+- **Network**: Stacks Testnet
+- **Address**: `ST15T00TRYSEM32RXVWMCNQD8QFS1B2856XR5Q43V`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
