@@ -1,0 +1,28 @@
+{
+  "sip": 16,
+  "name": "BeanOnStacks",
+  "description": "A limited edition collection of 1,000 unique beans living on the Stacks blockchain. Each bean is secured by Bitcoin's proof-of-work.",
+  "image": "ipfs://bafkreid4qmcdteugqnqw5mex6mu7i4syltscyrnuvarqushgbqw67j4lq4",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Cosmic Purple"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Coffee Bean"
+    },
+    {
+      "trait_type": "Accessory",
+      "value": "Bitcoin Stack"
+    },
+    {
+      "trait_type": "Animation",
+      "value": "Floating"
+    }
+  ],
+  "properties": {
+    "collection": "BeanOnStacks",
+    "creator": "Wizbisy"
+  }
+}

@@ -1,0 +1,7 @@
+[project]
+name = "BeanOnStacks"
+requirements = []
+
+[contracts.bean-nft]
+path = "contracts/bean-nft.clar"
+clarity_version = 2
