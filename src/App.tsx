@@ -21,6 +21,7 @@ function App() {
   const [userMints, setUserMints] = useState(0);
   const [txStatus, setTxStatus] = useState<null | 'idle' | 'pending' | 'success' | 'error'>(null);
   const [txMessage, setTxMessage] = useState('');
+  const [txId, setTxId] = useState<string | null>(null);
 
   // Handle session restore on mount
   useEffect(() => {
@@ -163,6 +164,7 @@ function App() {
 
     setTxStatus('pending');
     setTxMessage('⏳ Waiting for wallet approval...');
+    setTxId(null);
 
     try {
       await openContractCall({
@@ -177,10 +179,11 @@ function App() {
           icon: window.location.origin + beanSvg,
         },
         onFinish: (data) => {
-          const txId = data.txId;
+          const newTxId = data.txId;
           setTxStatus('pending');
-          setTxMessage(`⛏️ Transaction submitted! TX: ${txId.slice(0, 8)}...${txId.slice(-4)}`);
-          pollTransaction(txId);
+          setTxMessage(`⛏️ Transaction submitted! TX: ${newTxId.slice(0, 8)}...${newTxId.slice(-4)}`);
+          setTxId(newTxId);
+          pollTransaction(newTxId);
         },
         onCancel: () => {
           setTxStatus('error');
@@ -282,7 +285,19 @@ function App() {
             {txStatus && (
               <div className={`tx-status ${txStatus}`}>
                 {txStatus === 'pending' && <div className="tx-spinner"></div>}
-                <span>{txMessage}</span>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span>{txMessage}</span>
+                  {txId && (
+                    <a 
+                      href={`https://explorer.hiro.so/txid/${txId}?chain=testnet`} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      style={{ marginTop: '0.25rem', fontSize: '0.8rem', opacity: 0.9, textDecoration: 'underline' }}
+                    >
+                      View on Explorer ↗
+                    </a>
+                  )}
+                </div>
               </div>
             )}
 
