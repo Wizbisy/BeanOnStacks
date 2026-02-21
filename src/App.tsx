@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { AppConfig, UserSession, authenticate as stacksAuthenticate } from '@stacks/connect';
 import beanSvg from './assets/bean.svg';
 import { openContractCall } from '@stacks/connect';
-import { PostConditionMode } from '@stacks/transactions';
+import { PostConditionMode, principalCV, cvToHex } from '@stacks/transactions';
 
 // 1. Initialize Stacks AppConfig and UserSession
 const appConfig = new AppConfig(['store_write', 'publish_data']);
@@ -18,6 +18,7 @@ function App() {
   const [mounted, setMounted] = useState(false);
   const [address, setAddress] = useState<string | null>(null);
   const [mintedCount, setMintedCount] = useState(0);
+  const [userMints, setUserMints] = useState(0);
   const [txStatus, setTxStatus] = useState<null | 'idle' | 'pending' | 'success' | 'error'>(null);
   const [txMessage, setTxMessage] = useState('');
 
@@ -56,6 +57,36 @@ function App() {
     userSession.signUserOut();
     setAddress(null);
   };
+
+  const fetchUserMints = async (userAddress: string) => {
+    if (!userAddress) return;
+    try {
+      const url = `${API_BASE}/v2/contracts/call-read/${CONTRACT_ADDRESS}/${CONTRACT_NAME}/get-mints-of`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sender: userAddress, arguments: [cvToHex(principalCV(userAddress))] }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.okay && data.result) {
+          const count = parseInt(data.result.slice(-16), 16) || 0;
+          setUserMints(count);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch user mints:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (address) {
+      fetchUserMints(address);
+    } else {
+      setUserMints(0);
+    }
+  }, [address]);
 
   // Fetch minted count
   const fetchMintedCount = async () => {
@@ -110,6 +141,9 @@ function App() {
           setTxStatus('success');
           setTxMessage(`✅ Minted successfully!`);
           fetchMintedCount();
+          if (userSession.isUserSignedIn()) {
+            fetchUserMints(userSession.loadUserData().profile.stxAddress.testnet);
+          }
         } else if (data.tx_status === 'abort_by_response' || data.tx_status === 'abort_by_post_condition') {
           clearInterval(poll);
           setTxStatus('error');
@@ -220,8 +254,8 @@ function App() {
                 <span className="stat-value">1 STX</span>
               </div>
               <div className="stat-item">
-                <span className="stat-label">MAX / WALLET</span>
-                <span className="stat-value">10</span>
+                <span className="stat-label">YOUR MINTS</span>
+                <span className="stat-value">{userMints} / 10</span>
               </div>
             </div>
 
@@ -237,11 +271,11 @@ function App() {
             <button 
               className="btn btn-mint" 
               onClick={handleMint}
-              disabled={txStatus === 'pending' || (mintedCount >= 1000)}
+              disabled={txStatus === 'pending' || (mintedCount >= 1000) || (address !== null && userMints >= 10)}
             >
               <span className="btn-content">
                 <span className="mint-icon">⚡</span>
-                {txStatus === 'pending' ? 'Processing...' : 'Mint Bean NFT'}
+                {txStatus === 'pending' ? 'Processing...' : (address !== null && userMints >= 10) ? 'Max Reached' : 'Mint Bean NFT'}
               </span>
             </button>
 
