@@ -3,6 +3,7 @@ import { AppConfig, UserSession, authenticate as stacksAuthenticate } from '@sta
 import beanSvg from './assets/bean.svg';
 import { openContractCall } from '@stacks/connect';
 import { PostConditionMode, principalCV, cvToHex } from '@stacks/transactions';
+import { Copy, Check } from 'lucide-react';
 
 // 1. Initialize Stacks AppConfig and UserSession
 const appConfig = new AppConfig(['store_write', 'publish_data']);
@@ -22,6 +23,7 @@ function App() {
   const [txStatus, setTxStatus] = useState<null | 'idle' | 'pending' | 'success' | 'error'>(null);
   const [txMessage, setTxMessage] = useState('');
   const [txId, setTxId] = useState<string | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
 
   // Handle session restore on mount
   useEffect(() => {
@@ -57,6 +59,18 @@ function App() {
   const disconnect = () => {
     userSession.signUserOut();
     setAddress(null);
+  };
+
+  const copyAddress = async () => {
+    if (address) {
+      try {
+        await navigator.clipboard.writeText(address);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy address:', err);
+      }
+    }
   };
 
   const fetchUserMints = async (userAddress: string) => {
@@ -211,9 +225,19 @@ function App() {
           <span className="brand-text">BeanOnStacks</span>
         </div>
         {address ? (
-          <button className="btn btn-connect connected" onClick={disconnect}>
-            {`${address.slice(0, 6)}...${address.slice(-4)}`}
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <button 
+              className="btn btn-connect" 
+              onClick={copyAddress}
+              title="Copy Address"
+              style={{ padding: '0.6rem', minWidth: '40px' }}
+            >
+              {isCopied ? <Check size={16} color="#34d399" /> : <Copy size={16} />}
+            </button>
+            <button className="btn btn-connect connected" onClick={disconnect}>
+              {`${address.slice(0, 6)}...${address.slice(-4)}`}
+            </button>
+          </div>
         ) : (
           <button className="btn btn-connect" onClick={authenticate}>
             Connect Wallet
