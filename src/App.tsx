@@ -5,11 +5,9 @@ import { openContractCall } from '@stacks/connect';
 import { PostConditionMode, principalCV, cvToHex } from '@stacks/transactions';
 import { Copy, Check } from 'lucide-react';
 
-// 1. Initialize Stacks AppConfig and UserSession
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
 
-// Stacks Contract Config
 const CONTRACT_ADDRESS = 'ST15T00TRYSEM32RXVWMCNQD8QFS1B2856XR5Q43V';
 const CONTRACT_NAME = 'bean-nft';
 const NETWORK = 'testnet';
@@ -25,7 +23,6 @@ function App() {
   const [txId, setTxId] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
 
-  // Handle session restore on mount
   useEffect(() => {
     setMounted(true);
     if (userSession.isSignInPending()) {
@@ -103,7 +100,6 @@ function App() {
     }
   }, [address]);
 
-  // Fetch minted count
   const fetchMintedCount = async () => {
     try {
       const url = `${API_BASE}/v2/contracts/call-read/${CONTRACT_ADDRESS}/${CONTRACT_NAME}/get-last-token-id`;
